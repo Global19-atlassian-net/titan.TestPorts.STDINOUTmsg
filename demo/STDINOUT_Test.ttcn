@@ -1,0 +1,47 @@
+/******************************************************************************
+* Copyright (c) 2009, 2015  Ericsson AB
+* All rights reserved. This program and the accompanying materials
+* are made available under the terms of the Eclipse Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v10.html
+*
+* Contributors:
+* Balazs Andor Zalanyi
+* Endre Kulcsar
+* Gabor Szalai
+* Janos Kovesdi
+******************************************************************************/
+//
+//  File:               STDINOUT_Test.ttcn
+//  Description:        Example test for STDINOUT Test Port
+//  Rev:                R3A
+//  Prodnr:             CNL 113 642
+///////////////////////////////////////////////
+module STDINOUT_Test
+{
+  import from STDINOUTmsg_PortType all;
+
+  type component MTCType 
+  {
+    port STDINOUTmsg_PT STDINOUT_PORT;
+  }
+
+  testcase HelloW2() runs on MTCType system MTCType
+  {
+    timer T;
+ 
+    map(mtc:STDINOUT_PORT, system:STDINOUT_PORT);
+    STDINOUT_PORT.send("Hello, world!");
+    T.start(30.0);
+    alt {
+    [] STDINOUT_PORT.receive("Hello, TTCN-3!") { T.stop; setverdict(pass); }
+    [] T.timeout { setverdict(inconc); }
+    [] STDINOUT_PORT.receive { T.stop; setverdict(fail); }
+    }
+  }
+
+  control
+  {
+    execute(HelloW2());
+  }
+}
