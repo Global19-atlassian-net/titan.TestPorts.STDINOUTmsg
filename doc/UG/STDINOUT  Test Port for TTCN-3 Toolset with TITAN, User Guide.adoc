@@ -1,0 +1,224 @@
+---
+Author: Endre Kulcsár
+Version: 198 17-CNL 113 642, Rev. A
+Date: 2009-04-20
+
+---
+= STDINOUT Test Port for TTCN-3 Toolset with TITAN, User Guide
+:author: Endre Kulcsár
+:revnumber: 198 17-CNL 113 642, Rev. A
+:revdate: 2009-04-20
+:toc:
+
+== About This Document
+
+=== How to Read This Document
+
+This is the User Guide for the STDINOUT Test Port. The STDINOUT Test Port is developed for the TTCN-3 Toolset with TITAN <<_4, [4]>>. This document is intended to be read together with Functional Specification <<_2, [2]>>.
+
+=== Presumed Knowledge
+
+The knowledge of the TITAN TTCN-3 Test Executor <<_4, [4]>> and the TTCN-3 language <<_1, [1]>> is essential.
+
+== System Requirements
+
+In order to operate the STDINOUT Test Port the following system requirements must be satisfied:
+
+* TITAN TTCN-3 Test Executor R7A (1.7.pl0) or higher installed. For installation guide see <<_3, [3]>>.
+
+NOTE: This version of the Test Port is not compatible with TITAN releases earlier than R7A.
+
+* Unix, Sun Solaris or Linux operating system.
+
+== Fundamental Concepts
+
+This Test Port handles connection between the TTCN-3 test executor and the operator.
+
+= The Test Port
+
+== Overview
+
+The STDINOUT Test Port provides a simple interface between the TTCN-3 test suite and operator.
+
+The operator can enter text in a terminal (stdin) and the test port transmits this text as a charstring to the TTCN-3 test suite.
+
+The TTCN-3 test suite can send a charstring and the test port outputs this to the terminal (stdout).
+
+== Installation
+
+Since the STDINOUT Test Port is used as a part of the TTCN-3 test environment this requires TTCN-3 Test Executor to be installed before any operation of the STDINOUT Test Port. For more details on the installation of TTCN-3 Test Executor see the relevant section of <<_3, [3]>>.
+
+=== Preparation
+
+The STDINOUT Test Port package contains the following files:
+
+* __STDINOUTmsg_PT.cc__
+* __STDINOUTmsg_PT.hh__
+* __STDINOUTmsg_PortType.ttcn__
+
+=== Description of the Files in the Package
+
+[[stdinoutmsg-porttype-ttcn]]
+==== __STDINOUTmsg_PortType.ttcn__
+
+This contains the STDINOUT Test Port definition.
+
+[[stdinoutmsg-pt-hh]]
+==== __STDINOUTmsg_PT.hh__
+
+This is the C++ header file of the STDINOUT Test Port
+
+[[stdinoutmsg-pt-cc]]
+==== __STDINOUTmsg_PT.cc__
+
+This is the C++ source file of the STDINOUT Test Port
+
+== Configuration
+
+The executable test program behavior is determined via the run-time configuration file. This is a simple text file, which contains various sections (for example, `[TESTPORT_PARAMETERS]`) after each other. The usual suffix of configuration files is _.cfg_. For further information about the configuration file see <<_4, [4]>>.
+
+=== Test Port Parameters in the Test Port Configuration File
+
+No test port parameters are used for this Test Port.
+
+== Test Port Operation
+
+The STDINOUT Test Port has no ASPs. The Test Port can be used for sending and receiving TTCN-3 charstrings. The TTCN-3 `send` command followed by the necessary charstring in the TTCN-3 code will cause the text to be displayed at stdout (i.e.the terminal).The operator entered text at stdin (i.e. the terminal) is converted to TTCN-3 charstring by the test port when pressing "Enter". The `receive` command in the TTCN-3 code has to be used for the TTCN-3 test suite to receive this charstring.
+
+See the Examples section for example ways to use the STDINOUT Test Port in command line mode.
+
+= Error Messages
+
+`*Only one STDINOUT Test Port entity can be mapped on the same time*`
+
+The TTCN-3 map function can be used only once on a component for this test Port. If the map function is repeated then this error message is displayed.
+
+= Examples
+
+The "demo" directory includes the example TTCN-3 file __STDINOUT_Test.ttcn__. This file includes a simple test which outputs "Hello, world!" and expects the user input of "Hello, TTCN-3!". An example _Makefile_, _stdinout.cfg_ file and __ttcn3_autostart.sh__ file is also included.
+
+== Non-Parallel Execution Mode
+
+When the _Makefile_ includes `TTCN3_LIB = ttcn3` the user can run the example test in a single terminal:
+
+[source]
+----
+ehubuux110> STDINOUT_Test stdinout.cfg
+TTCN-3 Test Executor (single mode), version 1.7.pl4
+Using configuration file: `stdinout.cfg'
+Execution of control part in module STDINOUT_Test started.
+Test case HelloW2 started.
+Hello, world!
+Hello, TTCN-3!
+Test case HelloW2 finished. Verdict: pass
+Execution of control part in module STDINOUT_Test finished.
+Verdict statistics: 0 none (0.00 %), 1 pass (100.00 %), 0 inconc (0.00 %), 0 fail (0.00 %), 0 error (0.00 %).
+Test execution summary: 1 test case was executed. Overall verdict: pass
+ehubuux110>
+----
+
+== Parallel Execution Mode
+
+When the _Makefile_ includes `TTCN3_LIB = ttcn3-parallel` the host controller terminal can be used for the input/output:
+
+– Main Controller Terminal –
+
+[source]
+ehubuux110> mctr_cli stdinout.cfg
+
+********************************************
+* TTCN-3 Test Executor - Main Controller 2 *
+* Version: 1.7.pl4 (R7E)                   *
+********************************************
+
+Using configuration file: stdinout.cfg
+MC@ehubuux110: Listening on TCP port 56550.
+MC2>
+
+
+– Host Controller Terminal –
+
+[source]
+----
+ehubuux110> STDINOUT_Test ehubuux110 56550
+TTCN-3 Host Controller (parallel mode), version 1.7.pl4
+----
+
+– Main Controller Terminal –
+
+[source]
+----
+MTC@ehubuux110: Test case HelloW2 finished. Verdict: pass
+MTC@ehubuux110: Execution of control part in module STDINOUT_Test finished.
+MC@ehubuux110: Test execution finished.
+Execution of [EXECUTE] section finished.
+MC2> emtc
+MC@ehubuux110: Terminating MTC.
+MTC@ehubuux110: Verdict statistics: 0 none (0.00 %), 1 pass (100.00 %), 0 inconc (0.00 %), 0 fail (0.00 %), 0 error (0.00 %).
+MTC@ehubuux110: Test execution summary: 1 test case was executed. Overall verdict: pass
+MC@ehubuux110: MTC terminated.
+MC2> exit
+MC@ehubuux110: Shutting down session.
+MC@ehubuux110: Shutdown complete.
+----
+
+– Host Controller Terminal –
+[source]
+----
+Hello, world!
+Hello, TTCN-3!
+----
+
+– Main Controller Terminal –
+
+[source]
+----
+MTC@ehubuux110: Test case HelloW2 finished. Verdict: pass
+MTC@ehubuux110: Execution of control part in module STDINOUT_Test finished.
+MC@ehubuux110: Test execution finished.
+Execution of [EXECUTE] section finished.
+MC2> emtc
+MC@ehubuux110: Terminating MTC.
+MTC@ehubuux110: Verdict statistics: 0 none (0.00 %), 1 pass (100.00 %), 0 inconc (0.00 %), 0 fail (0.00 %), 0 error (0.00 %).
+MTC@ehubuux110: Test execution summary: 1 test case was executed. Overall verdict: pass
+MC@ehubuux110: MTC terminated.
+MC2> exit
+MC@ehubuux110: Shutting down session.
+MC@ehubuux110: Shutdown complete.
+----
+
+== Parallel Execution Mode with Autostart Script
+
+When the _Makefile_ includes `TTCN3_LIB = ttcn3-parallel`  the example shell script __ttcn3_autostart.sh__ can also be used. This script needs the binary executable and the configuration file as parameters (`NumHCs := 1` in the configuration file). For example it can be started as:
+
+[source]
+ttcn3_autostart.sh STDINOUT_Test stdinout.cfg
+
+This script will open a new terminal which can be used for the input/output.
+
+= Terminology
+
+None.
+
+= Abbreviations
+
+SUT:: System Under Test
+
+TP:: Test Port: Adaptation between TITAN TTCN-3 Test Executor and SUT.
+
+TTCN-3:: Testing and Test Control Notation version 3
+
+= References
+
+[[_1]]
+[1] ETSI ES 201 873-1 v3.2.1 (02/2007) +
+The Testing and Test Control Notation version 3. Part 1: Core Language
+
+[[_2]]
+[2] STDINOUT Test Port for TTCN-3 Toolset with TITAN, Function Specification
+
+[[_3]]
+[3] Installation Guide for TITAN TTCN-3 Test Executor
+
+[[_4]]
+[4] User Guide for TITAN TTCN-3 Test Executor

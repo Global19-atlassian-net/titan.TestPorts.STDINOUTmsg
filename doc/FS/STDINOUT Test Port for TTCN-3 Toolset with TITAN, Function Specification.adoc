@@ -1,0 +1,60 @@
+---
+Author: Endre Kulcsár
+Version: 155 17-CNL 113 642, Rev. A
+Date: 2009-04-20
+
+---
+= STDINOUT Test Port for TTCN-3 Toolset with TITAN, Function Specification
+:author: Endre Kulcsár
+:revnumber: 155 17-CNL 113 642, Rev. A
+:revdate: 2009-04-20
+:toc:
+
+== How to Read this Document
+
+This is the Function Specification for the STDINOUT Test Port. The STDINOUT Test Port is developed for the TTCN-3 Toolset with TITAN <<_2, [2]>> according to the Requirement Specification <<_3, [3]>> .
+
+== Scope
+
+The purpose of this document is to specify the functionality of the STDINOUT Test Port.
+
+= General
+
+The STDINOUT Test Port provides a simple interface between the TTCN-3 test suite and operator.
+
+The operator can enter text in a terminal (stdin) and the test port transmits this text as a charstring to the TTCN-3 test suite.
+
+The TTCN-3 test suite can send a charstring and the test port outputs this to the terminal (stdout).
+
+= Function Specification
+
+The STDINOUT Test Port has no ASPs. The Test Port can be used for sending and receiving TTCN-3 charstrings. The TTCN-3 `send` command followed by the necessary charstring in the TTCN-3 code will cause the text to be displayed at stdout (i.e.the terminal).The operator entered text at stdin (i.e. the terminal) is converted to TTCN-3 charstring by the test port when pressing "Enter". The `receive` command in the TTCN-3 code has to be used for the TTCN-3 test suite to receive this charstring.
+
+= Terminology
+
+None.
+
+= Abbreviations
+
+ASP:: Abstract Service Primitive
+
+MTC:: Main Test Component:
+
+SUT:: System Under Test
+
+TP:: Test Port
+
+TTCN-3:: Testing and Test Control Notation version 3
+
+== References
+
+[[_1]]
+[1] ETSI ES 201 873-1 v3.2.1(02/2007)The +
+Testing and Test Control Notation version 3. Part 1: Core Language
+
+[[_2]]
+[2] User Guide for TITAN TTCN-3 Test Executor
+
+[[_3]]
+[3] 10/0363-FCP 101 4664-CR5 +
+ASUA Daemon Performance Upgrade and Small Improvements and Updates Rev A
